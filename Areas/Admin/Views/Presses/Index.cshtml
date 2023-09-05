@@ -1,0 +1,47 @@
+﻿@model IEnumerable<WebShop.Models.ViewModels.Books.PressVM>
+
+@{
+    ViewBag.Title = "Presses";
+}
+
+<h2>Presses</h2>
+
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+
+<p>
+    @Html.ActionLink("Add press", "AddPress", "", new { @class = "btn btn-success" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PressName)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PressName)
+            </td>
+            <td style="width: 100px;">
+                @Html.ActionLink("Edit", "EditPress", new { id = item.Id }, new { @class = "btn btn-primary" })
+            </td>
+
+            <td style="width: 120px;">
+                @Html.ActionLink("Details", "PressDetails", new { id = item.Id }, new { @class = "btn btn-success" })
+            </td>
+
+            <td style="width: 100px;">
+                @Html.ActionLink("Delete", "DeletePress", new { id = item.Id }, new { @class = "btn btn-danger" })
+            </td>
+        </tr>
+    }
+
+</table>

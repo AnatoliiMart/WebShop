@@ -1,0 +1,60 @@
+﻿@model IEnumerable<WebShop.Models.ViewModels.Books.AuthorVM>
+
+@{
+    ViewBag.Title = "Authors";
+}
+
+<h2>Authors</h2>
+
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+
+<p>
+    @Html.ActionLink("Add author", "AddAuthor", "", new { @class = "btn btn-success" })
+</p>
+@if (!Model.Any())
+{
+    <h1 class="text-center">There are no pages</h1>
+}
+else
+{
+    <table class="table">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Surname
+            </th>
+            <th></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+
+                <td style="width: 100px;">
+                        @Html.ActionLink("Edit", "EditAuthor", new { id = item.Id }, new { @class = "btn btn-primary" })
+                </td>
+
+                <td style="width: 120px;">
+                        @Html.ActionLink("Details", "AuthorDetails", new { id = item.Id }, new { @class = "btn btn-success" })
+                </td>
+
+                <td style="width: 100px;">
+                        @Html.ActionLink("Delete", "DeleteAuthor", new { id = item.Id }, new { @class = "btn btn-danger" })
+                </td>
+            </tr>
+        }
+
+    </table>
+}

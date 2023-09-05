@@ -1,0 +1,73 @@
+﻿@model IEnumerable<WebShop.Models.ViewModels.Books.BookVM>
+
+@{
+    ViewBag.Title = "Books";
+}
+
+<h2>Books</h2>
+
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+
+<p>
+    @Html.ActionLink("Add book", "AddBook", "", new { @class = "btn btn-success" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Title
+        </th>
+
+        <th>
+            Publication year
+        </th>
+        <th>
+            Author
+        </th>
+        <th>
+            Genre
+        </th>
+        <th>
+            Press
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.PublicationYear)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.AuthorName)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.GenreName)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.PressName)
+            </td>
+
+            <td style="width: 120px;">
+                @Html.ActionLink("Details", "BookDetails", new { id = item.Id }, new { @class = "btn btn-success" })
+            </td>
+
+            <td style="width: 100px;">
+                @Html.ActionLink("Delete", "DeleteBook", new { id = item.Id }, new { @class = "btn btn-danger" })
+            </td>
+        </tr>
+    }
+
+</table>

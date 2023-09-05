@@ -1,0 +1,115 @@
+﻿@model WebShop.Models.ViewModels.Shop.ProductVM
+
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<h2>@Model.Title</h2>
+
+<br />
+
+<div class="row">
+    <div class="col-sm-12 col-md-5">
+        <img src="/images/Uploads/Products/@Model.Id/Thumbs/@Model.ImageName" />
+    </div>
+
+    <div class="col-sm-12 col-md-7">
+        @Html.LabelFor(model => model.Author, "Author")
+        <br />
+        @Html.DisplayFor(model => model.Author)
+        <br />
+        <br />
+        @Html.LabelFor(model => model.Genre, "Genre")
+        <br />
+        @Html.DisplayFor(model => model.Genre)
+        <br />
+        <br />
+        @Html.LabelFor(model => model.Press, "Press")
+        <br />
+        @Html.DisplayFor(model => model.Press)
+        <br />
+        <br />
+        @Html.LabelFor(model => model.Description, "Description")
+        <br />
+        @Html.DisplayFor(model => model.Description)
+        <br />
+        <br />
+        @Html.LabelFor(model => model.Price, "Price")
+        <br />
+        @Html.DisplayFor(model => model.Price) UAH
+
+
+        @if (Request.IsAuthenticated)
+        {
+            <div class="addtocart">
+                <a href="#" class="addtocart btn btn-success">Add to cart</a>
+                <span class="loader">
+                    <img src="~/Content/img/loading_multicolor.gif" height="100" width="150" />
+                </span>
+                <div class="ajax-msg">
+                    The product has been added to your cart
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-success">
+                Please login for add product to cart
+            </div>
+        }
+
+
+    </div>
+</div>
+
+<div class="row">
+    <h3>Product Gallery</h3>
+    <div class="col-sm-12 fancyboxdiv">
+        <br /><br />
+        <div class="row">
+            @foreach (var item in Model.GalleryImages)
+            {
+                <div class="col">
+                    <a class="fancybox" rel="gallery1" href="/Images/Uploads/Products/@Model.Id/Gallery/@item">
+                        <img src="/Images/Uploads/Products/@Model.Id/Gallery/Thumbs/@item" />
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <link href="~/Content/jquery.fancybox.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.fancybox.js"></script>
+    <script src="~/Content/ShopJS/ProductDetailsJS.js"></script>
+    <script>
+/********************Add to cart*********************/
+$(function () {
+    $("a.addtocart").click(function (e) {
+        e.preventDefault();
+
+        $("span.loader").addClass("inlineblock");
+
+        var url = "/cart/AddToCartPart";
+
+        $.get(url, { id: @Model.Id
+    }, function(data) {
+        $(".ajaxcart").html(data);
+        }).done(function () {
+            $("span.loader").removeClass("inlineblock");
+            $("div.ajax-msg").addClass("inlineblock");
+
+            setTimeout(function () {
+                $("div.ajax-msg").fadeOut("fast");
+                $("div.ajax-msg").removeClass("inlineblock");
+            }, 2000);
+        });
+    });
+});
+/****************************************************/
+    </script>
+
+}
+

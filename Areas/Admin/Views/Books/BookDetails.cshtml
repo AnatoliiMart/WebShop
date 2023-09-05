@@ -1,0 +1,57 @@
+﻿@model WebShop.Models.ViewModels.Books.BookVM
+
+@{
+    ViewBag.Title = "BookDetails";
+}
+
+<h2>BookDetails</h2>
+
+<div>
+    <h4>BookVM</h4>
+    <hr />
+    <dl class="dl-horizontal"> 
+        <dt>
+           Book title
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+           Publication year
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PublicationYear)
+        </dd>
+
+        <dt>
+           Genre
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.GenreName)
+        </dd>
+
+        <dt>
+           Author
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AuthorName)
+        </dd>
+
+        <dt>
+           Press
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PressName)
+        </dd>
+
+    </dl>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        @Html.ActionLink("Back to books", "Index", "", new { @class = "btn btn-primary" })
+    </div>
+</div>
