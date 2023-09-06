@@ -55,7 +55,15 @@
                 </td>
                 <td>
                     <a href="/shop/product-details/@item.Title.Replace(' ', '-').ToLower()">
-                        <img src="/Images/Uploads/Products/@item.Id/Thumbs/@item.ImageName" />
+                        @if (item.ImageName != null)
+                        {
+                            <img src="/Images/Uploads/Products/@item.Id/Thumbs/@item.ImageName" />
+                        }
+                        else
+                        {
+                             <img src="~/Content/img/no_image.png" />
+                        }
+
                     </a>
                 </td>
                 <td>

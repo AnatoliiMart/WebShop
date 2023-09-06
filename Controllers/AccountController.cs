@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
 using WebShop.Models.Data;
 using WebShop.Models.ViewModels.Account;
+using WebShop.Models.ViewModels.Shop;
 
 namespace WebShop.Controllers
 {
@@ -17,10 +19,7 @@ namespace WebShop.Controllers
         //GET: Account/create-account
         [ActionName("create-account")]
         [HttpGet]
-        public ActionResult CreateAccount()
-        {
-            return View("CreateAccount");
-        }
+        public ActionResult CreateAccount() => View("CreateAccount");
 
         //POST: Account/create-account
         [ActionName("create-account")]
@@ -97,7 +96,7 @@ namespace WebShop.Controllers
             //Check model valid
             if (!ModelState.IsValid)
                 return View(model);
-            
+
             //Check user valid
             bool isValid = false;
             using (DB db = new DB())
@@ -119,13 +118,15 @@ namespace WebShop.Controllers
         }
 
         //GET: /account/logout
-        public ActionResult Logout() 
+        [Authorize]
+        public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
             return RedirectToAction("Login");
         }
 
-        public ActionResult UserNavPart() 
+        [Authorize]
+        public ActionResult UserNavPart()
         {
             //Take User Name
             string userName = User.Identity.Name;
@@ -145,6 +146,7 @@ namespace WebShop.Controllers
         //GET: /account/user-profile
         [HttpGet]
         [ActionName("user-profile")]
+        [Authorize]
         public ActionResult UserProfile()
         {
             //Take username
@@ -155,17 +157,18 @@ namespace WebShop.Controllers
             using (DB db = new DB())
             {
                 //Take user from db
-                UserMDL user = (db.Users.FirstOrDefault(x=>x.Login == userName));
+                UserMDL user = (db.Users.FirstOrDefault(x => x.Login == userName));
                 //Innit model by data 
                 model = new UserProfileVM(user);
             }
             //Return view with model
-            return View("UserProfile",model);
+            return View("UserProfile", model);
         }
 
         //POST: /account/user-profile
         [HttpPost]
         [ActionName("user-profile")]
+        [Authorize]
         public ActionResult UserProfile(UserProfileVM model)
         {
             bool userNameIsChanged = false;
@@ -185,10 +188,10 @@ namespace WebShop.Controllers
             using (DB db = new DB())
             {
                 //Take username
-                string userName =  User.Identity.Name;
+                string userName = User.Identity.Name;
 
                 //Check on userName change
-                if (userName!=model.Login)
+                if (userName != model.Login)
                 {
                     userName = model.Login;
                     userNameIsChanged = true;
@@ -224,7 +227,70 @@ namespace WebShop.Controllers
             }
             else
                 return RedirectToAction("Logout");
-            
+
+        }
+
+        //GET: /account/Orders
+        [Authorize(Roles = "User")]
+        public ActionResult Orders()
+        {
+            //innit OrdersForUserVM
+            List<OrdersForUserVM> ordersForUsers = new List<OrdersForUserVM>();
+
+            using (DB db = new DB())
+            {
+                //take user Id
+                UserMDL user = db.Users.FirstOrDefault(x => x.Login == User.Identity.Name);
+                int userId = user.Id;
+
+                //Innit OrderVM model
+                List<OrderVM> orders = db.Orders
+                                         .ToArray()    
+                                         .Where(x => x.UserId == userId)
+                                         .Select(x => new OrderVM(x))
+                                         .ToList();
+
+                //Check product list in OrderVM
+                foreach (var order in orders)
+                {
+                    //Innit Dict of products
+                    Dictionary<string, int> prodsAndQty = new Dictionary<string, int>();
+
+                    //Innit total price 
+                    decimal total = 0m;
+
+                    //Innit OrderDetailsMDL list
+                    List<OrderDetailsMDL> ordersDetails = db.OrdersDetails.Where(x => x.OrderId == order.OrderId).ToList();
+
+                    //Check OrderDetailsMDL list
+                    foreach (var orderDetails in ordersDetails)
+                    {
+                        //Take product
+                        ProductMDL product = db.Products.FirstOrDefault(x => x.Id == orderDetails.ProductId);
+                        //take prod price
+                        decimal price = (decimal)product.Price;
+
+                        //Take prod Name 
+                        string prodName = product.Title;
+
+                        //Add prod to dictionary
+                        prodsAndQty.Add(prodName, orderDetails.Quantity);
+                        //Take total cost
+                        total += price * orderDetails.Quantity;
+                    }
+                    //Add data to model OrdersForUserVM
+                    ordersForUsers.Add(new OrdersForUserVM()
+                    {
+                        OrderNumber = order.OrderId,
+                        Total = total,
+                        ProductsAndQty = prodsAndQty,
+                        OrderDate = order.OrderDate
+                    });
+                }
+            }
+
+            //Return View with model
+            return View(ordersForUsers);
         }
     }
 }

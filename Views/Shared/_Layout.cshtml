@@ -16,7 +16,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarText" style="margin-left:10px;">
             <ul class="navbar-nav me-auto ">
-                @Html.Action("PagesMenuPart", "Pages")
+                @*@Html.Action("PagesMenuPart", "Pages")*@
 
                 @if (Request.IsAuthenticated)
                 {
@@ -36,6 +36,7 @@
                     else
                     {
                         @Html.Action("UserNavPart", "Account", new { area = "" })
+                        @Html.ActionLink("Orders", "Orders", "Account", null, new { @class = "navbar-text", style = "text-decoration: none; margin-left: 10px;" })
                     }
                 }
             </ul>
@@ -43,7 +44,7 @@
             @if (Request.IsAuthenticated && User.IsInRole("Admin"))
             {
                 <span class="navbar-text" style="margin-right:10px;">
-                    @Html.ActionLink("Admin Area", "Index", "Dashboard", new { area = "Admin" }, null)
+                    @Html.ActionLink("Admin Area", "Index", "Dashboard", new { area = "Admin" }, new {@class= "navbar-brand", style = "text-decoration: none;"})
                 </span>
             }
             else

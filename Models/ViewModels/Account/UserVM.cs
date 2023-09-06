@@ -35,6 +35,10 @@ namespace WebShop.Models.ViewModels.Account
         [DisplayName("Confirm password")]
         public string ConfirmPassword { get; set; }
 
+        public UserVM()
+        {
+            
+        }
         public UserVM(UserMDL user)
         {
             Id = user.Id;

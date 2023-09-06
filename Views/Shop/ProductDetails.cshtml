@@ -10,7 +10,14 @@
 
 <div class="row">
     <div class="col-sm-12 col-md-5">
-        <img src="/images/Uploads/Products/@Model.Id/Thumbs/@Model.ImageName" />
+        @if (Model.ImageName == null)
+        {
+            <img src="~/Content/img/no_image.png" />
+        }
+        else
+        {
+            <img src="/images/Uploads/Products/@Model.Id/Thumbs/@Model.ImageName" />
+        }
     </div>
 
     <div class="col-sm-12 col-md-7">

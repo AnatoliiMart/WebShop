@@ -5,11 +5,13 @@ using System.Linq;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using WebShop.Areas.Admin.Models.ViewModels.Shop;
 using WebShop.Models.Data;
 using WebShop.Models.ViewModels.Shop;
 
 namespace WebShop.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ShopController : Controller
     {
         // GET: Admin/Shop
@@ -501,6 +503,74 @@ namespace WebShop.Areas.Admin.Controllers
 
             if (System.IO.File.Exists(fullPathPreview))
                 System.IO.File.Delete(fullPathPreview);
+        }
+
+
+        //GET: Admin/Shop/Orders
+        [HttpGet]
+        public ActionResult Orders() 
+        {
+            //Innit OrdersForAdminVM
+            List<OrdersForAdminVM> ordersForAdmin = new List<OrdersForAdminVM>();
+
+            using (DB db = new DB())
+            {
+                //Innit model OrderVM
+                List<OrderVM> orders = db.Orders
+                                         .ToArray()
+                                         .Select(x => new OrderVM(x))
+                                         .ToList();
+                //Check OrderVM data 
+                foreach (var order in orders)
+                {
+                    //Innit Dict 
+                    Dictionary<string, int> prodAndQty = new Dictionary<string, int>();
+
+                    //Create var for total
+                    decimal total = 0m;
+
+                    //Innit orderDetailsMDL list
+                    List<OrderDetailsMDL> ordersDetails = db.OrdersDetails
+                                                            .Where(x => x.OrderId == order.OrderId)
+                                                            .ToList();
+
+                    //Take UserName
+                    UserMDL user = db.Users.FirstOrDefault(x => x.Id == order.UserId);
+                    string userName = user.Login;
+
+                    //Check list orderDetailsMDL 
+                    foreach (var orderDetails in ordersDetails)
+                    {
+                        //Take product
+                        ProductMDL product = db.Products.FirstOrDefault(x => x.Id == orderDetails.ProductId);
+
+                        //Take product price
+                        decimal price = (decimal)product.Price;
+
+                        //Take product name 
+                        string prodName = product.Title;
+
+                        //Add product to dictionary
+                        prodAndQty.Add(prodName, orderDetails.Quantity);
+
+                        //Take total cost of all products of this user
+                        total += orderDetails.Quantity * price;
+                    }
+
+                    //Add data into OrderForAdminVM
+                    ordersForAdmin.Add(new OrdersForAdminVM()
+                    {
+                        OrderNumber = order.OrderId,
+                        UserName = userName,
+                        Total = total,
+                        ProductsAndQty = prodAndQty,
+                        OrderDate = order.OrderDate
+                    });
+                }
+            }
+
+            //Return View with model
+            return View(ordersForAdmin);
         }
     }
 }

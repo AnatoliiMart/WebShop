@@ -7,6 +7,7 @@ using WebShop.Models.ViewModels.Books;
 
 namespace WebShop.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BooksController : Controller
     {
         // GET: Admin/Books
