@@ -11,8 +11,6 @@
         return false;
     });
 
-    /*-----------------------------------------------------------*/
-
     /* Confirm page deletion */
 
     $("a.delete").click(function () {

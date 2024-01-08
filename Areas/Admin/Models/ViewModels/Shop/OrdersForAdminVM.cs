@@ -13,6 +13,7 @@ namespace WebShop.Areas.Admin.Models.ViewModels.Shop
 
         
         public string UserName { get; set; }
+
         [DisplayName("Total to pay")]
         public decimal Total { get; set; }
 

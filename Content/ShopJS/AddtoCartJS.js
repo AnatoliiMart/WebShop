@@ -95,7 +95,7 @@ $(function () {
             $.post(url,
                 {},
                 function (data) {
-                    $(".ajax-bg span").text("Thank you. You will now be redirected to paypal.");
+                    $(".ajax-bg span").text("Thank you. You will now be redirected to paysystem.");
                     setTimeout(function () {
                         $('form input[name = "submit"]').click();
                     }, 2000);
